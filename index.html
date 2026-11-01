@@ -203,10 +203,10 @@
     <!-- نافذة النتيجة -->
     <div id="resultModal" class="modal">
         <div class="modal-content">
-            <h3>🎉 مبروك كسبتي!</h3>
-            <p>لقد ربحتِ العرض التالي:</p>
+            <h3 id="modalTitle">🎉 مبروك كسبتي!</h3>
+            <p id="modalSubtitle">لقد ربحتِ العرض التالي:</p>
             <div id="wonPrize" class="prize-text"></div>
-            <button class="close-btn" onclick="closeModal()">استلمي الجائزة</button>
+            <button id="modalBtn" class="close-btn" onclick="closeModal()">استلمي الجائزة</button>
         </div>
     </div>
 
@@ -223,7 +223,7 @@
         const canvas = document.getElementById('wheel');
         const ctx = canvas.getContext('2d');
         const totalSectors = sectors.length;
-        const arc = Math.PI / (totalSectors / 2);
+        const arc = (2 * Math.PI) / totalSectors;
         let startAngle = 0;
         let spinning = false;
 
@@ -266,8 +266,30 @@
             spinning = true;
             document.getElementById('spinBtn').disabled = true;
 
-            const randomDegree = Math.floor(Math.random() * 360) + 1800; // لفات متعددة
-            currentAngle += randomDegree;
+            // 1. اختيار القطاع الفائز عشوائياً
+            const winningIndex = Math.floor(Math.random() * totalSectors);
+            const sectorDegree = 360 / totalSectors;
+
+            // 2. المؤشر ثابت في الأعلى عند الزاوية 270 درجة
+            // مركز القطاع المطلوب حسابه:
+            const targetSectorCenter = winningIndex * sectorDegree + sectorDegree / 2;
+            
+            // إضافة تباين عشوائي آمن في حدود منتصف القطاع لتجنب الوقوف على الخطوط الفاصلة
+            const randomOffset = (Math.random() - 0.5) * (sectorDegree * 0.5);
+
+            // زاوية التدوير المطلوبة لوضع القطاع الفائز تحت السهم العلوي تماماً
+            const targetDegree = ((270 - targetSectorCenter + randomOffset) % 360 + 360) % 360;
+
+            // حساب الفرق الإضافي للدوران في اتجاه عقارب الساعة
+            const currentMod = ((currentAngle % 360) + 360) % 360;
+            let forwardDiff = targetDegree - currentMod;
+            if (forwardDiff <= 0) {
+                forwardDiff += 360;
+            }
+
+            // إضافة دورات كاملة (5 دورات على الأقل = 1800 درجة)
+            const fullSpins = 5 * 360;
+            currentAngle += fullSpins + forwardDiff;
 
             canvas.style.transition = "transform 4s cubic-bezier(0.15, 0.9, 0.2, 1)";
             canvas.style.transform = `rotate(${currentAngle}deg)`;
@@ -275,24 +297,29 @@
             setTimeout(() => {
                 spinning = false;
                 document.getElementById('spinBtn').disabled = false;
-
-                // حساب الجائزة بناءً على زاوية التوقف
-                const actualDegree = currentAngle % 360;
-                const sectorDegree = 360 / totalSectors;
-                const winningIndex = Math.floor((360 - (actualDegree % 360)) / sectorDegree) % totalSectors;
-
                 showResult(sectors[winningIndex].text);
             }, 4000);
         }
 
         function showResult(prize) {
+            const isTryAgain = prize === "جربي تاني";
+            document.getElementById('modalTitle').innerText = isTryAgain ? "✨ حظ أوفر!" : "🎉 مبروك كسبتي!";
+            document.getElementById('modalSubtitle').innerText = isTryAgain ? "للأسف لم يحالفك الحظ هذه المرة:" : "لقد ربحتِ العرض التالي:";
             document.getElementById('wonPrize').innerText = prize;
+            document.getElementById('modalBtn').innerText = isTryAgain ? "حاولي مرة أخرى" : "استلمي الجائزة";
             document.getElementById('resultModal').style.display = 'flex';
         }
 
         function closeModal() {
             document.getElementById('resultModal').style.display = 'none';
         }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('resultModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        };
     </script>
 </body>
 
