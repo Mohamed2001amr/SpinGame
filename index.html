@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>عجلة الحظ - Velora</title>
+    <title>عجلة الحظ - Velora for korean Skin Care</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -32,77 +32,335 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            padding: 20px 15px;
+            overflow-x: hidden;
         }
 
         .container {
-            max-width: 500px;
-            width: 100%;
+            width: min(96vw, calc(min(76vw, 68vh) + 120px));
+            max-width: 960px;
             background: #ffffff;
-            border-radius: 24px;
-            box-shadow: 0 10px 30px rgba(16, 80, 63, 0.1);
-            padding: 30px 20px;
+            border-radius: 28px;
+            box-shadow: 0 16px 45px rgba(16, 80, 63, 0.12);
+            padding: 25px 20px 30px 20px;
             text-align: center;
             border: 2px solid var(--sage-green);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: auto;
+            position: relative;
         }
 
         .logo-area {
-            font-size: 28px;
+            font-size: clamp(20px, 3.2vw, 30px);
             font-weight: 900;
             color: var(--primary-green);
-            margin-bottom: 5px;
-            letter-spacing: 1px;
+            margin-bottom: 6px;
+            letter-spacing: 0.5px;
+            line-height: 1.3;
         }
 
         .subtitle {
-            font-size: 15px;
+            font-size: clamp(14px, 1.8vw, 17px);
             color: var(--terracotta);
-            margin-bottom: 25px;
-            font-weight: 500;
+            margin-bottom: 15px;
+            font-weight: 600;
         }
 
         .wheel-container {
             position: relative;
-            width: 320px;
-            height: 320px;
-            margin: 0 auto 25px auto;
+            width: min(74vw, 64vh);
+            height: min(74vw, 64vh);
+            max-width: 680px;
+            max-height: 680px;
+            min-width: 270px;
+            min-height: 270px;
+            margin: 10px auto 25px auto;
         }
 
         .pointer {
             position: absolute;
-            top: -15px;
+            top: -18px;
             left: 50%;
             transform: translateX(-50%);
             width: 0;
             height: 0;
-            border-left: 15px solid transparent;
-            border-right: 15px solid transparent;
-            border-top: 30px solid var(--terracotta);
-            z-index: 20;
-            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+            border-left: 18px solid transparent;
+            border-right: 18px solid transparent;
+            border-top: 36px solid var(--terracotta);
+            z-index: 30;
+            filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.25));
         }
 
         canvas {
             width: 100%;
             height: 100%;
             border-radius: 50%;
-            box-shadow: 0 0 0 8px var(--primary-green), 0 10px 25px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 0 0 8px var(--primary-green), 0 14px 35px rgba(0, 0, 0, 0.16);
             transition: transform 4s cubic-bezier(0.15, 0.9, 0.2, 1);
+            display: block;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* عناصر منتجات العناية بالبشرة بدون خلفية حول العجلة */
+        .skincare-item {
+            position: absolute;
+            z-index: 25;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            pointer-events: auto;
+            text-decoration: none;
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .skincare-item img {
+            height: clamp(80px, 13vw, 145px);
+            width: auto;
+            object-fit: contain;
+            filter: drop-shadow(0 12px 18px rgba(16, 80, 63, 0.22)) drop-shadow(0 3px 6px rgba(0,0,0,0.1));
+            transition: all 0.35s ease;
+            user-select: none;
+            -webkit-user-drag: none;
+        }
+
+        .product-glow {
+            position: absolute;
+            width: 85%;
+            height: 65%;
+            bottom: 12%;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(216, 230, 195, 0.75) 0%, rgba(216, 230, 195, 0) 70%);
+            z-index: -1;
+            pointer-events: none;
+            transition: transform 0.35s ease, background 0.35s ease;
+        }
+
+        .product-badge {
+            margin-top: -6px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--sage-green);
+            color: var(--primary-green);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: clamp(10px, 1.2vw, 12px);
+            font-weight: 700;
+            white-space: nowrap;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+
+        .skincare-item:hover {
+            z-index: 40;
+        }
+
+        .skincare-item:hover img {
+            transform: scale(1.15) translateY(-6px);
+            filter: drop-shadow(0 18px 26px rgba(16, 80, 63, 0.35)) drop-shadow(0 0 16px rgba(212, 175, 55, 0.45));
+        }
+
+        .skincare-item:hover .product-glow {
+            transform: scale(1.4);
+            background: radial-gradient(circle, rgba(245, 200, 173, 0.8) 0%, rgba(216, 230, 195, 0) 70%);
+        }
+
+        .skincare-item:hover .product-badge {
+            background: var(--primary-green);
+            color: #ffffff;
+            border-color: var(--gold);
+            box-shadow: 0 6px 16px rgba(16, 80, 63, 0.3);
+            transform: translateY(2px) scale(1.05);
+        }
+
+        /* مواقع المنتجات حول العجلة */
+        .item-anua-pink {
+            top: -15px;
+            left: -40px;
+            animation: floatPink 4.2s ease-in-out infinite;
+        }
+
+        .item-anua-green {
+            top: -15px;
+            right: -40px;
+            animation: floatGreen 4.8s ease-in-out infinite 0.6s;
+        }
+
+        .item-centella-oil {
+            bottom: 30px;
+            left: -48px;
+            animation: floatOil 5.1s ease-in-out infinite 1.2s;
+        }
+
+        .item-centella-sun {
+            bottom: 30px;
+            right: -45px;
+            animation: floatSun 4.5s ease-in-out infinite 0.3s;
+        }
+
+        .item-centella-foam {
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: floatFoam 4.6s ease-in-out infinite 0.9s;
+        }
+
+        @keyframes floatPink {
+            0%, 100% { transform: translateY(0) rotate(-3deg); }
+            50% { transform: translateY(-10px) rotate(1deg); }
+        }
+
+        @keyframes floatGreen {
+            0%, 100% { transform: translateY(0) rotate(3deg); }
+            50% { transform: translateY(-12px) rotate(-1deg); }
+        }
+
+        @keyframes floatOil {
+            0%, 100% { transform: translateY(0) rotate(-2deg); }
+            50% { transform: translateY(-11px) rotate(2deg); }
+        }
+
+        @keyframes floatSun {
+            0%, 100% { transform: translateY(0) rotate(2deg); }
+            50% { transform: translateY(-10px) rotate(-2deg); }
+        }
+
+        @keyframes floatFoam {
+            0%, 100% { transform: translateX(-50%) translateY(0) rotate(1deg); }
+            50% { transform: translateX(-50%) translateY(-9px) rotate(-2deg); }
+        }
+
+        /* تسريع وتفاعل حركة المنتجات أثناء دوران العجلة */
+        .wheel-container.is-spinning .skincare-item {
+            animation-duration: 1.6s !important;
+        }
+
+        /* شريط سفلي متناسق لضمان وضوح كامل على الشاشات الصغيرة */
+        .products-strip {
+            display: none;
+            width: 100%;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px dashed var(--sage-green);
+        }
+
+        .products-strip-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--terracotta);
+            margin-bottom: 10px;
+        }
+
+        .products-strip-items {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .products-strip-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: var(--ivory);
+            padding: 8px 10px;
+            border-radius: 14px;
+            border: 1px solid var(--sage-green);
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .products-strip-item:hover {
+            transform: translateY(-3px);
+            border-color: var(--gold);
+            background: #ffffff;
+            box-shadow: 0 6px 14px rgba(16, 80, 63, 0.12);
+        }
+
+        .products-strip-item img {
+            height: 52px;
+            width: auto;
+            object-fit: contain;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+            margin-bottom: 4px;
+        }
+
+        .products-strip-item span {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--primary-green);
+        }
+
+        /* استجابة الموبايل والشاشات الضيقة */
+        @media (max-width: 768px) {
+            .container {
+                width: 96vw;
+                padding: 18px 12px 22px 12px;
+            }
+
+            .wheel-container {
+                width: min(82vw, 55vh);
+                height: min(82vw, 55vh);
+                margin: 15px auto 20px auto;
+            }
+
+            .skincare-item img {
+                height: clamp(65px, 15vw, 85px);
+            }
+
+            .item-anua-pink {
+                top: -8px;
+                left: -12px;
+            }
+
+            .item-anua-green {
+                top: -8px;
+                right: -12px;
+            }
+
+            .item-centella-oil {
+                bottom: 12px;
+                left: -14px;
+            }
+
+            .item-centella-sun {
+                bottom: 12px;
+                right: -14px;
+            }
+
+            .item-centella-foam {
+                display: none; /* يتم إظهاره في الشريط السفلي لمنع التداخل مع زر التدوير */
+            }
+
+            .product-badge {
+                padding: 2px 7px;
+                font-size: 9px;
+            }
+
+            .products-strip {
+                display: block;
+            }
         }
 
         .spin-btn {
             background: linear-gradient(135deg, var(--primary-green), var(--teal));
             color: #ffffff;
             border: none;
-            padding: 14px 40px;
-            font-size: 20px;
+            padding: 14px 45px;
+            font-size: clamp(18px, 2.2vw, 22px);
             font-weight: 700;
             border-radius: 50px;
             cursor: pointer;
             box-shadow: 0 6px 20px rgba(16, 80, 63, 0.3);
             transition: all 0.3s ease;
             width: 100%;
-            max-width: 240px;
+            max-width: 280px;
+            position: relative;
+            z-index: 28;
         }
 
         .spin-btn:hover {
@@ -189,15 +447,77 @@
 <body>
 
     <div class="container">
-        <div class="logo-area">VELORA 🇰🇷</div>
+        <div class="logo-area">Velora for korean Skin Care</div>
         <div class="subtitle">دوري العجلة واحصلي على خصمك الفوري! ✨</div>
 
-        <div class="wheel-container">
+        <div id="wheelContainer" class="wheel-container">
             <div class="pointer"></div>
-            <canvas id="wheel" width="400" height="400"></canvas>
+            <canvas id="wheel" width="800" height="800"></canvas>
+
+            <!-- 1. سيروم أنوا نياسيناميد (أعلى اليسار) -->
+            <div class="skincare-item item-anua-pink" title="سيروم أنوا نياسيناميد 10% - لتفتيح البشرة وتوحيد لونها">
+                <div class="product-glow"></div>
+                <img src="image/product-anua-niacinamide.png" alt="سيروم أنوا نياسيناميد">
+                <div class="product-badge">أنوا نياسيناميد ✨</div>
+            </div>
+
+            <!-- 2. سيروم أنوا أزيليك أسيد (أعلى اليمين) -->
+            <div class="skincare-item item-anua-green" title="سيروم أنوا أزيليك أسيد 10% - لتهدئة الاحمرار وتصفية البشرة">
+                <div class="product-glow"></div>
+                <img src="image/product-anua-azelaic.png" alt="سيروم أنوا أزيليك أسيد">
+                <div class="product-badge">أنوا أزيليك أسيد 🌿</div>
+            </div>
+
+            <!-- 3. زيت تنظيف سينتيلا (أسفل اليسار) -->
+            <div class="skincare-item item-centella-oil" title="زيت تنظيف سينتيلا الخفيف - تنظيف عميق للمسام وإزالة المكياج">
+                <div class="product-glow"></div>
+                <img src="image/product-centella-oil.png" alt="زيت تنظيف سينتيلا">
+                <div class="product-badge">زيت سينتيلا 💧</div>
+            </div>
+
+            <!-- 4. واقي شمس سينتيلا هيالو-سيكا (أسفل اليمين) -->
+            <div class="skincare-item item-centella-sun" title="واقي شمس سينتيلا هيالو-سيكا SPF50+ - ترطيب مائي وحماية متكاملة">
+                <div class="product-glow"></div>
+                <img src="image/product-centella-sun.png" alt="واقي شمس سينتيلا">
+                <div class="product-badge">واقي شمس سينتيلا ☀️</div>
+            </div>
+
+            <!-- 5. غسول فوم سينتيلا أمبول (أسفل العجلة) -->
+            <div class="skincare-item item-centella-foam" title="غسول فوم سينتيلا أمبول - تنظيف لطيف ورغوة غنية للبشرة الحساسة">
+                <div class="product-glow"></div>
+                <img src="image/product-centella-foam.png" alt="غسول فوم سينتيلا">
+                <div class="product-badge">غسول فوم سينتيلا 🫧</div>
+            </div>
         </div>
 
         <button id="spinBtn" class="spin-btn" onclick="startSpin()">جربي حظك الآن</button>
+
+        <!-- شريط المنتجات السفلي التفاعلي -->
+        <div class="products-strip">
+            <div class="products-strip-title">✨ منتجات فيلورا الكورية الأكثر طلباً في العرض:</div>
+            <div class="products-strip-items">
+                <div class="products-strip-item" title="سيروم أنوا نياسيناميد 10%">
+                    <img src="image/product-anua-niacinamide.png" alt="أنوا نياسيناميد">
+                    <span>أنوا نياسيناميد</span>
+                </div>
+                <div class="products-strip-item" title="سيروم أنوا أزيليك أسيد 10%">
+                    <img src="image/product-anua-azelaic.png" alt="أنوا أزيليك أسيد">
+                    <span>أنوا أزيليك</span>
+                </div>
+                <div class="products-strip-item" title="واقي شمس سينتيلا">
+                    <img src="image/product-centella-sun.png" alt="واقي شمس سينتيلا">
+                    <span>واقي سينتيلا</span>
+                </div>
+                <div class="products-strip-item" title="زيت تنظيف سينتيلا">
+                    <img src="image/product-centella-oil.png" alt="زيت تنظيف سينتيلا">
+                    <span>زيت سينتيلا</span>
+                </div>
+                <div class="products-strip-item" title="غسول فوم سينتيلا">
+                    <img src="image/product-centella-foam.png" alt="غسول سينتيلا">
+                    <span>غسول سينتيلا</span>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- نافذة النتيجة -->
@@ -231,33 +551,38 @@
             const angle = startAngle + i * arc;
             ctx.save();
             ctx.beginPath();
-            ctx.moveTo(200, 200);
-            ctx.arc(200, 200, 195, angle, angle + arc, false);
-            ctx.lineTo(200, 200);
+            ctx.moveTo(400, 400);
+            ctx.arc(400, 400, 390, angle, angle + arc, false);
+            ctx.lineTo(400, 400);
             ctx.fillStyle = sector.color;
             ctx.fill();
             ctx.strokeStyle = "#ffffff";
-            ctx.lineWidth = 3;
+            ctx.lineWidth = 6;
             ctx.stroke();
 
             // رسم النص
             ctx.save();
-            ctx.translate(200, 200);
+            ctx.translate(400, 400);
             ctx.rotate(angle + arc / 2);
             ctx.textAlign = "right";
             ctx.fillStyle = sector.textColor || "#ffffff";
-            ctx.font = "bold 18px 'Tajawal'";
-            ctx.fillText(sector.text, 170, 8);
+            ctx.font = "bold 34px 'Tajawal', sans-serif";
+            ctx.fillText(sector.text, 340, 14);
             ctx.restore();
             ctx.restore();
         }
 
         function drawWheel() {
-            ctx.clearRect(0, 0, 400, 400);
+            ctx.clearRect(0, 0, 800, 800);
             sectors.forEach((sector, i) => drawSector(sector, i));
         }
 
         drawWheel();
+        if (document.fonts) {
+            document.fonts.ready.then(() => {
+                drawWheel();
+            });
+        }
 
         let currentAngle = 0;
 
@@ -265,6 +590,8 @@
             if (spinning) return;
             spinning = true;
             document.getElementById('spinBtn').disabled = true;
+            const wheelContainer = document.getElementById('wheelContainer');
+            if (wheelContainer) wheelContainer.classList.add('is-spinning');
 
             // 1. اختيار القطاع الفائز عشوائياً
             const winningIndex = Math.floor(Math.random() * totalSectors);
@@ -297,6 +624,7 @@
             setTimeout(() => {
                 spinning = false;
                 document.getElementById('spinBtn').disabled = false;
+                if (wheelContainer) wheelContainer.classList.remove('is-spinning');
                 showResult(sectors[winningIndex].text);
             }, 4000);
         }
