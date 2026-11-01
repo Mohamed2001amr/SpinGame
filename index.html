@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>عجلة الحظ - Velora</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-green: #10503f;
+            --sage-green: #d8e6c3;
+            --ivory: #f8f3ed;
+            --peach: #f5c8ad;
+            --terracotta: #c37c5a;
+            --teal: #228469;
+            --gold: #d4af37;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Tajawal', sans-serif;
+        }
+
+        body {
+            background-color: var(--ivory);
+            color: var(--primary-green);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 500px;
+            width: 100%;
+            background: #ffffff;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(16, 80, 63, 0.1);
+            padding: 30px 20px;
+            text-align: center;
+            border: 2px solid var(--sage-green);
+        }
+
+        .logo-area {
+            font-size: 28px;
+            font-weight: 900;
+            color: var(--primary-green);
+            margin-bottom: 5px;
+            letter-spacing: 1px;
+        }
+
+        .subtitle {
+            font-size: 15px;
+            color: var(--terracotta);
+            margin-bottom: 25px;
+            font-weight: 500;
+        }
+
+        .wheel-container {
+            position: relative;
+            width: 320px;
+            height: 320px;
+            margin: 0 auto 25px auto;
+        }
+
+        .pointer {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-top: 30px solid var(--terracotta);
+            z-index: 20;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            box-shadow: 0 0 0 8px var(--primary-green), 0 10px 25px rgba(0, 0, 0, 0.15);
+            transition: transform 4s cubic-bezier(0.15, 0.9, 0.2, 1);
+        }
+
+        .spin-btn {
+            background: linear-gradient(135deg, var(--primary-green), var(--teal));
+            color: #ffffff;
+            border: none;
+            padding: 14px 40px;
+            font-size: 20px;
+            font-weight: 700;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(16, 80, 63, 0.3);
+            transition: all 0.3s ease;
+            width: 100%;
+            max-width: 240px;
+        }
+
+        .spin-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(16, 80, 63, 0.4);
+        }
+
+        .spin-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* نافذة الفوز */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(16, 80, 63, 0.6);
+            backdrop-filter: blur(5px);
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 20px;
+            max-width: 350px;
+            width: 100%;
+            text-align: center;
+            border: 3px solid var(--gold);
+            animation: popIn 0.4s ease;
+        }
+
+        @keyframes popIn {
+            0% {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .modal-content h3 {
+            color: var(--primary-green);
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+
+        .prize-text {
+            font-size: 22px;
+            font-weight: 900;
+            color: var(--terracotta);
+            background: var(--ivory);
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border: 1px dashed var(--terracotta);
+        }
+
+        .close-btn {
+            background: var(--primary-green);
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            font-size: 16px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 700;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="logo-area">VELORA 🇰🇷</div>
+        <div class="subtitle">دوري العجلة واحصلي على خصمك الفوري! ✨</div>
+
+        <div class="wheel-container">
+            <div class="pointer"></div>
+            <canvas id="wheel" width="400" height="400"></canvas>
+        </div>
+
+        <button id="spinBtn" class="spin-btn" onclick="startSpin()">جربي حظك الآن</button>
+    </div>
+
+    <!-- نافذة النتيجة -->
+    <div id="resultModal" class="modal">
+        <div class="modal-content">
+            <h3>🎉 مبروك كسبتي!</h3>
+            <p>لقد ربحتِ العرض التالي:</p>
+            <div id="wonPrize" class="prize-text"></div>
+            <button class="close-btn" onclick="closeModal()">استلمي الجائزة</button>
+        </div>
+    </div>
+
+    <script>
+        const sectors = [
+            { color: "#10503f", text: "منتج والتاني بخصم 50%" },
+            { color: "#228469", text: "خصم 30%" },
+            { color: "#c37c5a", text: "2 + 1 هدية" },
+            { color: "#d8e6c3", text: "3 + 2 هدية", textColor: "#10503f" },
+            { color: "#f5c8ad", text: "جربي تاني", textColor: "#10503f" },
+            { color: "#e2b17a", text: "خصم 40%" }
+        ];
+
+        const canvas = document.getElementById('wheel');
+        const ctx = canvas.getContext('2d');
+        const totalSectors = sectors.length;
+        const arc = Math.PI / (totalSectors / 2);
+        let startAngle = 0;
+        let spinning = false;
+
+        function drawSector(sector, i) {
+            const angle = startAngle + i * arc;
+            ctx.save();
+            ctx.beginPath();
+            ctx.moveTo(200, 200);
+            ctx.arc(200, 200, 195, angle, angle + arc, false);
+            ctx.lineTo(200, 200);
+            ctx.fillStyle = sector.color;
+            ctx.fill();
+            ctx.strokeStyle = "#ffffff";
+            ctx.lineWidth = 3;
+            ctx.stroke();
+
+            // رسم النص
+            ctx.save();
+            ctx.translate(200, 200);
+            ctx.rotate(angle + arc / 2);
+            ctx.textAlign = "right";
+            ctx.fillStyle = sector.textColor || "#ffffff";
+            ctx.font = "bold 18px 'Tajawal'";
+            ctx.fillText(sector.text, 170, 8);
+            ctx.restore();
+            ctx.restore();
+        }
+
+        function drawWheel() {
+            ctx.clearRect(0, 0, 400, 400);
+            sectors.forEach((sector, i) => drawSector(sector, i));
+        }
+
+        drawWheel();
+
+        let currentAngle = 0;
+
+        function startSpin() {
+            if (spinning) return;
+            spinning = true;
+            document.getElementById('spinBtn').disabled = true;
+
+            const randomDegree = Math.floor(Math.random() * 360) + 1800; // لفات متعددة
+            currentAngle += randomDegree;
+
+            canvas.style.transition = "transform 4s cubic-bezier(0.15, 0.9, 0.2, 1)";
+            canvas.style.transform = `rotate(${currentAngle}deg)`;
+
+            setTimeout(() => {
+                spinning = false;
+                document.getElementById('spinBtn').disabled = false;
+
+                // حساب الجائزة بناءً على زاوية التوقف
+                const actualDegree = currentAngle % 360;
+                const sectorDegree = 360 / totalSectors;
+                const winningIndex = Math.floor((360 - (actualDegree % 360)) / sectorDegree) % totalSectors;
+
+                showResult(sectors[winningIndex].text);
+            }, 4000);
+        }
+
+        function showResult(prize) {
+            document.getElementById('wonPrize').innerText = prize;
+            document.getElementById('resultModal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('resultModal').style.display = 'none';
+        }
+    </script>
+</body>
+
+</html>
